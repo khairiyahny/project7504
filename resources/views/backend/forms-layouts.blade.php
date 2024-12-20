@@ -652,31 +652,59 @@
 
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Vertical Form</h5>
+              <h5 class="card-title">Form FAQ</h5>
 
               <!-- Vertical Form -->
-              <form class="row g-3">
+              {{-- <form method="POST" action="{{ isset($faq) ? route('faq.update', $faq->id) : route('faq.submit') }}" class="row g-3">
+                @csrf
+                @if(isset($faq))
+                    @method('PUT') <!-- Menyatakan bahwa ini adalah request UPDATE -->
+                @endif
                 <div class="col-12">
-                  <label for="inputNanme4" class="form-label">Your Name</label>
-                  <input type="text" class="form-control" id="inputNanme4">
+                  <label for="inputQuestion" class="form-label">Pertanyaan</label>
+                  <input type="text" class="form-control" id="inputQuestion" name="question" required>
                 </div>
                 <div class="col-12">
-                  <label for="inputEmail4" class="form-label">Email</label>
-                  <input type="email" class="form-control" id="inputEmail4">
-                </div>
-                <div class="col-12">
-                  <label for="inputPassword4" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="inputPassword4">
-                </div>
-                <div class="col-12">
-                  <label for="inputAddress" class="form-label">Address</label>
-                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+                  <label for="inputAnswer" class="form-label">Jawaban</label>
+                  <input type="text" class="form-control" id="inputAnswer" name="answer" required>
                 </div>
                 <div class="text-center">
                   <button type="submit" class="btn btn-primary">Submit</button>
                   <button type="reset" class="btn btn-secondary">Reset</button>
                 </div>
-              </form><!-- Vertical Form -->
+                @if(session('success'))
+                  <div class="alert alert-success">
+                      {{ session('success') }}
+                  </div>
+                @endif
+              </form><!-- Vertical Form --> --}}
+              <form method="POST" action="{{ isset($faq) ? route('faq.update', $faq->id) : route('faq.submit') }}" class="row g-3">
+                @csrf
+                @if(isset($faq))
+                    @method('PUT') <!-- Menyatakan bahwa ini adalah request UPDATE -->
+                @endif
+            
+                <div class="col-12">
+                    <label for="inputQuestion" class="form-label">Pertanyaan</label>
+                    <input type="text" class="form-control" id="inputQuestion" name="question" value="{{ old('question', isset($faq) ? $faq->question : '') }}" required>
+                </div>
+            
+                <div class="col-12">
+                    <label for="inputAnswer" class="form-label">Jawaban</label>
+                    <input type="text" class="form-control" id="inputAnswer" name="answer" value="{{ old('answer', isset($faq) ? $faq->answer : '') }}" required>
+                </div>
+            
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-secondary">Reset</button>
+                </div>
+            
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+            </form><!-- Vertical Form -->
 
             </div>
           </div>

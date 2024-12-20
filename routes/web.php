@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\FaqController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,9 +19,10 @@ Route::get('/welcome', function () {
     return view('welcome');
 });
 
-Route::get('/', function () {
-    return view('index');
-});
+// Route::get('/', function () {
+//     return view('index');
+// });
+Route::get('/', [IndexController::class, 'index']);
 
 /* backend */
 Route::get('/backend', function () {
@@ -115,12 +118,19 @@ Route::get('/backend/pages-login', function () {
 Route::get('/backend/pages-register', function () {
     return view('backend.pages-register');
 });
-Route::get('/backend/tables-data', function () {
-    return view('backend.tables-data');
-});
+// Route::get('/backend/tables-data', function () {
+//     return view('backend.tables-data');
+// });
 Route::get('/backend/tables-general', function () {
     return view('backend.tables-general');
 });
 Route::get('/backend/users-profile', function () {
     return view('backend.users-profile');
 });
+
+Route::get('/forms-layout', [FaqController::class, 'create'])->name('faq.create');
+Route::post('/forms-layout', [FaqController::class, 'submit'])->name('faq.submit');
+Route::get('/backend/tables-data', [FaqController::class, 'index'])->name('faq.index'); 
+Route::delete('/backend/tables-data/{id}', [FaqController::class, 'destroy'])->name('faq.destroy');
+Route::get('/backend/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
+Route::put('/backend/update/{id}', [FaqController::class, 'update'])->name('faq.update');
