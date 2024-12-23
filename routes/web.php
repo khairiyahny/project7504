@@ -134,3 +134,14 @@ Route::get('/backend/tables-data', [FaqController::class, 'index'])->name('faq.i
 Route::delete('/backend/tables-data/{id}', [FaqController::class, 'destroy'])->name('faq.destroy');
 Route::get('/backend/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
 Route::put('/backend/update/{id}', [FaqController::class, 'update'])->name('faq.update');
+
+Route::get('/forms-layout', [FaqController::class, 'create'])->name('faq.create');
+Route::post('/forms-layout', [FaqController::class, 'submit'])->name('faq.submit');
+Route::get('/backend/tables-data', [FaqController::class, 'index'])->name('faq.index'); 
+Route::delete('/backend/tables-data/{id}', [FaqController::class, 'destroy'])->name('faq.destroy');
+Route::get('/backend/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
+Route::put('/backend/update/{id}', [FaqController::class, 'update'])->name('faq.update');
+
+Route::get('/backend/forms-tambahkegiatan', function () {
+    return view('backend.forms-tambahkegiatan');
+});
