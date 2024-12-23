@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\LocationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -145,3 +146,7 @@ Route::put('/backend/update/{id}', [FaqController::class, 'update'])->name('faq.
 Route::get('/backend/forms-tambahkegiatan', function () {
     return view('backend.forms-tambahkegiatan');
 });
+
+Route::get('/get-location', [LocationController::class, 'getLocation'])->name('get.location');
+
+
