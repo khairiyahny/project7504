@@ -7,7 +7,7 @@
         var map, marker;
 
         function initMap() {
-            var initialPos = {lat: -1.2877, lng: 36.8233}; // Default center point (Nairobi, for example)
+            var initialPos = {lat: 0.553412, lng: 123.134293}; // Default center point (Nairobi, for example)
 
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 15,
