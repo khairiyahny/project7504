@@ -288,12 +288,12 @@
         </a>
         <ul id="statsek-nav" class="nav-content collapse" >
           <li>
-            <a href="{{ url('backend/tables-data')}}">
+            <a href="{{ route('backend.tables-kegiatan-tpi') }}">
               <i class="bi bi-circle"></i><span>Pendampingan TPI EPSS</span>
             </a>
           </li>
           <li>
-            <a href="{{ url('backend/tables-data')}}">
+            <a href="{{ route('backend.tables-kegiatan-opd')}}">
               <i class="bi bi-circle"></i><span>Pendampingan OPD Statistik Sektoral</span>
             </a>
           </li>
@@ -302,10 +302,26 @@
 
       <!-- Master Dropdown -->
       <li class="nav-item">
-        <a class="nav-link " href="{{ url('backend')}}">
-          <i class="bi bi-cast"></i>
-          <span>Master</span>
+        <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-cast"></i><span>Master</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
+        <ul id="master-nav" class="nav-content collapse" >
+          <li>
+            <a href="{{ url('backend')}}">
+              <i class="bi bi-circle"></i><span>Master User</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url('backend')}}">
+              <i class="bi bi-circle"></i><span>Master Pegawai</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url('backend')}}">
+              <i class="bi bi-circle"></i><span>Master OPD</span>
+            </a>
+          </li>
+        </ul>
       </li>
       
       <!-- Templates Droppdown -->

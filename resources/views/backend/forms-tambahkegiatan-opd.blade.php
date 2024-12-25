@@ -28,6 +28,8 @@
 
   <!-- Template Main CSS File -->
   <link href="{{asset('assets-backend/css/style.css')}}" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: NiceAdmin
@@ -288,12 +290,12 @@
         </a>
         <ul id="statsek-nav" class="nav-content collapse" >
           <li>
-            <a href="{{ url('backend/tables-data')}}">
+            <a href="{{ route('backend.tables-kegiatan-tpi') }}">
               <i class="bi bi-circle"></i><span>Pendampingan TPI EPSS</span>
             </a>
           </li>
           <li>
-            <a href="{{ url('backend/tables-data')}}">
+            <a href="{{ route('backend.tables-kegiatan-opd') }}">
               <i class="bi bi-circle"></i><span>Pendampingan OPD Statistik Sektoral</span>
             </a>
           </li>
@@ -551,131 +553,277 @@
 
     <section class="section">
       <div class="row">
-        {{-- <div class="col-lg-8"> --}}
-
           <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Kegiatan Pendampingan</h5>
+              <div class="card-body">
+                  <h5 class="card-title">Kegiatan Pendampingan</h5>
+    
+                  <!-- Notifikasi success -->
+                  @if (session('success'))
+                      <div class="alert alert-success">
+                          {{ session('success') }}
+                      </div>
+                  @endif
+    
+                  <!-- Cek error -->
+                  @if ($errors->any())
+                  <div class="alert alert-danger">
+                      <ul>
+                          @foreach ($errors->all() as $error)
+                              <li>{{ $error }}</li>
+                          @endforeach
+                      </ul>
+                  </div>
+                  @endif
+    
+                  <!-- Form Tambah/Edit Kegiatan -->
+                  <form method="POST" action="{{ isset($kegiatanOpd) ? route('kegiatanopd.update', $kegiatanOpd->id) : route('kegiatanopd.submit') }}" enctype="multipart/form-data">
+                      @csrf
+                      @isset($kegiatanOpd)
+                          @method('PUT')
+                      @endisset
+    
+                      <input type="hidden" name="id" value="{{ old('id', $kegiatanOpd->id ?? '') }}">
+    
+                      <!-- Tanggal Kegiatan -->
+                      <div class="row mb-3">
+                          <label for="inputDate" class="col-sm-2 col-form-label">Tanggal Kegiatan</label>
+                          <div class="col-sm-10">
+                              <input type="date" class="form-control w-auto" id="inputDate" name="tanggal" value="{{ old('tanggal', $kegiatanOpd->tanggal ?? '') }}" required>
+                          </div>
+                      </div>
+    
+                      <!-- Nama Anggota Tim SMS -->
+                      {{-- <div class="row mb-3">
+                          <label for="inputText" class="col-sm-2 col-form-label">Nama Anggota Tim SMS</label>
+                          <div class="col-sm-10">
+                              <input type="text" class="form-control" id="inputText" name="nama_anggota_tim_sms" value="{{ old('nama_anggota_tim_sms', $kegiatanOpd->nama_anggota_tim_sms ?? '') }}" required>
+                          </div>
+                      </div> --}}
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Nama Anggota Tim SMS</label>
+                        <div class="col-sm-10">
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Pilih Anggota Tim SMS
+                                </button>
+                                <ul class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton" style="max-height: 300px; overflow-y: auto;">
+                                    @foreach($anggotaTim as $anggota)
+                                    <li class="form-check mb-2">
+                                        <input 
+                                            class="form-check-input" 
+                                            type="checkbox" 
+                                            value="{{ $anggota->id }}" 
+                                            id="anggota{{ $anggota->id }}" 
+                                            name="nama_anggota_tim_sms[]" 
+                                            style="transform: scale(1.2);" 
+                                            @if(isset($selectedAnggota) && in_array($anggota->id, $selectedAnggota)) checked @endif>
+                                        <label class="form-check-label" for="anggota{{ $anggota->id }}">{{ $anggota->nama }}</label>
+                                    </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                      </div>
+    
+                      <!-- OPD Lokus -->
+                      <div class="row mb-3">
+                        <label for="opdLokus" class="col-sm-2 col-form-label">OPD Lokus</label>
+                        <div class="col-sm-10">
+                            <select class="form-select" id="opdLokus" name="opd_lokus" required>
+                                <option value="" disabled selected>Pilih OPD Lokus</option>
+                                @foreach($opdList as $opd)
+                                    <option value="{{ $opd }}" {{ (isset($kegiatanOpd) && $kegiatanOpd->opd_lokus == $opd) ? 'selected' : '' }}>
+                                        {{ $opd }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                      </div>
+    
+                      <!-- Lokus Lainnya -->
+                      <div class="row mb-3">
+                          <label for="inputText" class="col-sm-2 col-form-label">Lokus Lainnya</label>
+                          <div class="col-sm-10">
+                              <input type="text" class="form-control" id="inputText" name="lokus_lainnya" value="{{ old('lokus_lainnya', $kegiatanOpd->lokus_lainnya ?? '') }}" required>
+                          </div>
+                      </div>
+    
+                      <!-- Jenis Kegiatan -->
+                      <div class="row mb-3">
+                        <label for="jenisKegiatan" class="col-sm-2 col-form-label">Jenis Kegiatan</label>
+                        <div class="col-sm-10">
+                            <div id="jenisKegiatan">
+                                <input class="btn-check" type="radio" name="jenis_kegiatan" id="kompilasi" value="Kompilasi Produk Administrasi (Kompromi)" 
+                                    {{ old('jenis_kegiatan', isset($kegiatanOpd) ? $kegiatanOpd->jenis_kegiatan : '') == 'Kompilasi Produk Administrasi (Kompromi)' ? 'checked' : '' }}>
+                                <label class="btn btn-outline-primary me-2" for="kompilasi">Kompilasi Produk Administrasi (Kompromi)</label>
+                    
+                                <input class="btn-check" type="radio" name="jenis_kegiatan" id="survei" value="Survei (Pendataan tidak lengkap)" 
+                                    {{ old('jenis_kegiatan', isset($kegiatanOpd) ? $kegiatanOpd->jenis_kegiatan : '') == 'Survei (Pendataan tidak lengkap)' ? 'checked' : '' }}>
+                                <label class="btn btn-outline-primary me-2" for="survei">Survei (Pendataan tidak lengkap)</label>
+                    
+                                <input class="btn-check" type="radio" name="jenis_kegiatan" id="pendataan" value="Pendataan Lengkap" 
+                                    {{ old('jenis_kegiatan', isset($kegiatanOpd) ? $kegiatanOpd->jenis_kegiatan : '') == 'Pendataan Lengkap' ? 'checked' : '' }}>
+                                <label class="btn btn-outline-primary me-2" for="pendataan">Pendataan Lengkap</label>
+                            </div>
+                        </div>
+                      </div>
 
-              <!-- General Form Elements -->
-              <form>
-                <div class="row mb-3">
-                  <label for="inputDate" class="col-sm-2 col-form-label">Tanggal Kegiatan</label>
-                  <div class="col-sm-10">
-                    <input type="date" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Nama Anggota Tim SMS</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">OPD Lokus</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Lokus Lainnya</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Jenis Kegiatan</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Judul Kegiatan</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Kunjungan</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Nama Pegawai OPD</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">NJabatan Pegawai OPD</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Topik/Materi Pendampingan</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Skor Penyerapan/Pemahaman Topik/Materi GSBPM</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Skor Penyerapan/Pemahaman Topik/Materi Rekomstat</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Skor Penyerapan/Pemahaman Topik/Materi Metadata</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Resume/Catatan Kunjungan</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Lokasi</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Dokumentasi Kunjungan</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                {{-- <div class="row mb-3">
-                  <label for="inputNumber" class="col-sm-2 col-form-label">Dokumentasi Kunjungan</label>
-                  <div class="col-sm-10">
-                    <input class="form-control" type="file" id="formFile">
-                  </div>
-                </div> --}}
-                <div class="row mb-3">
-                  {{-- <label class="col-sm-2 col-form-label">Submit Button</label> --}}
-                  <div class="col-sm-20">
-                    <button type="submit" class="btn btn-primary">Tambahkan Kegiatan</button>
-                  </div>
-                </div>
+                      <!-- Judul Kegiatan -->
+                      <div class="row mb-3">
+                          <label for="inputText" class="col-sm-2 col-form-label">Judul Kegiatan</label>
+                          <div class="col-sm-10">
+                              <input type="text" class="form-control" id="inputText" name="judul_kegiatan" 
+                                  value="{{ old('judul_kegiatan', isset($kegiatanOpd) ? $kegiatanOpd->judul_kegiatan : '') }}" required>
+                          </div>
+                      </div>
 
-              </form><!-- End General Form Elements -->
+                      <!-- Kunjungan -->
+                      <div class="row mb-3">
+                        <label for="kunjungan" class="col-sm-2 col-form-label">Kunjungan</label>
+                        <div class="col-sm-10">
+                            <div id="kunjungan">
+                                @for ($i = 1; $i <= 4; $i++)
+                                    <input class="btn-check" type="radio" name="kunjungan" id="kunjungan{{$i}}" value="Kunjungan Ke-{{$i}}" 
+                                        {{ old('kunjungan', isset($kegiatanOpd) ? $kegiatanOpd->kunjungan : '') == "Kunjungan Ke-{$i}" ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary me-2" for="kunjungan{{$i}}">Kunjungan Ke-{{$i}}</label>
+                                @endfor
+                    
+                                <input class="btn-check" type="radio" name="kunjungan" id="kunjunganKeLainnya" value="Kunjungan Ke-5, Dst" 
+                                    {{ old('kunjungan', isset($kegiatanOpd) ? $kegiatanOpd->kunjungan : '') == 'Kunjungan Ke-5, Dst' ? 'checked' : '' }}>
+                                <label class="btn btn-outline-primary me-2" for="kunjunganKeLainnya">Kunjungan Ke-5, Dst</label>
+                            </div>
+                        </div>
+                      </div>
 
-            </div>
+                      <!-- Nama Pegawai OPD -->
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Nama Pegawai OPD</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputText" name="nama_pegawai_opd" 
+                                value="{{ old('nama_pegawai_opd', isset($kegiatanOpd) ? $kegiatanOpd->nama_pegawai_opd : '') }}" required>
+                        </div>
+                      </div>
+
+                      <!-- Jabatan Pegawai OPD -->
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Jabatan Pegawai OPD</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputText" name="jabatan_pegawai_opd" 
+                                value="{{ old('jabatan_pegawai_opd', isset($kegiatanOpd) ? $kegiatanOpd->jabatan_pegawai_opd : '') }}" required>
+                        </div>
+                      </div>
+
+                      <!-- Topik Pendampingan -->
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Topik Pendampingan</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputText" name="topik_pendampingan" 
+                                value="{{ old('topik_pendampingan', isset($kegiatanOpd) ? $kegiatanOpd->topik_pendampingan : '') }}" required>
+                        </div>
+                      </div>
+
+                      <!-- Skor Pemahaman GSBPM -->
+                      <div class="row mb-3">
+                        <label for="skorPemahamanGsbpm" class="col-sm-2 col-form-label">Skor Penyerapan/Pemahaman Topik/Materi GSBPM</label>
+                        <div class="col-sm-10">
+                          <div id="skorPemahamanGsbpm">
+                            @for ($i = 1; $i <= 10; $i++)
+                              <input class="btn-check" type="radio" name="skor_pemahaman_gsbpm" id="skor{{$i}}" value="{{ $i }}" 
+                                {{ old('skor_pemahaman_gsbpm', isset($kegiatanOpd) ? $kegiatanOpd->skor_pemahaman_gsbpm : '') == $i ? 'checked' : '' }}>
+                              <label class="btn btn-outline-primary me-2" for="skor{{$i}}">{{ $i }}</label>
+                            @endfor
+                      
+                            <input class="btn-check" type="radio" name="skor_pemahaman_gsbpm" id="skorNA" value="NA" 
+                              {{ old('skor_pemahaman_gsbpm', isset($kegiatanOpd) ? $kegiatanOpd->skor_pemahaman_gsbpm : '') == 'NA' ? 'checked' : '' }}>
+                            <label class="btn btn-outline-primary me-2" for="skorNA">NA</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Skor Pemahaman Rekomstat -->
+                      <div class="row mb-3">
+                        <label for="skorPemahamanRekomstat" class="col-sm-2 col-form-label">Skor Penyerapan/Pemahaman Topik/Materi Rekomstat</label>
+                        <div class="col-sm-10">
+                          <div id="skorPemahamanRekomstat">
+                            @for ($i = 1; $i <= 10; $i++)
+                              <input class="btn-check" type="radio" name="skor_pemahaman_rekomstat" id="rekomstat{{$i}}" value="{{ $i }}" 
+                                {{ old('skor_pemahaman_rekomstat', isset($kegiatanOpd) ? $kegiatanOpd->skor_pemahaman_rekomstat : '') == $i ? 'checked' : '' }}>
+                              <label class="btn btn-outline-primary me-2" for="rekomstat{{$i}}">{{ $i }}</label>
+                            @endfor
+                      
+                            <input class="btn-check" type="radio" name="skor_pemahaman_rekomstat" id="rekomstatNA" value="NA" 
+                              {{ old('skor_pemahaman_rekomstat', isset($kegiatanOpd) ? $kegiatanOpd->skor_pemahaman_rekomstat : '') == 'NA' ? 'checked' : '' }}>
+                            <label class="btn btn-outline-primary me-2" for="rekomstatNA">NA</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Skor Pemahaman Metadata -->
+                      <div class="row mb-3">
+                        <label for="skorPemahamanMetadata" class="col-sm-2 col-form-label">Skor Penyerapan/Pemahaman Topik/Materi Metadata</label>
+                        <div class="col-sm-10">
+                          <div id="skorPemahamanMetadata">
+                            @for ($i = 1; $i <= 10; $i++)
+                              <input class="btn-check" type="radio" name="skor_pemahaman_metadata" id="metadata{{$i}}" value="{{ $i }}" 
+                                {{ old('skor_pemahaman_metadata', isset($kegiatanOpd) ? $kegiatanOpd->skor_pemahaman_metadata : '') == $i ? 'checked' : '' }}>
+                              <label class="btn btn-outline-primary me-2" for="metadata{{$i}}">{{ $i }}</label>
+                            @endfor
+                      
+                            <input class="btn-check" type="radio" name="skor_pemahaman_metadata" id="metadataNA" value="NA" 
+                              {{ old('skor_pemahaman_metadata', isset($kegiatanOpd) ? $kegiatanOpd->skor_pemahaman_metadata : '') == 'NA' ? 'checked' : '' }}>
+                            <label class="btn btn-outline-primary me-2" for="metadataNA">NA</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Resume -->
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Resume/Catatan Kunjungan</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputText" name="resume" 
+                                value="{{ old('resume', isset($kegiatanOpd) ? $kegiatanOpd->resume : '') }}" required>
+                        </div>
+                      </div>
+
+                      <!-- Lokasi -->
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Lokasi</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputText" name="lokasi" 
+                                value="{{ old('lokasi', isset($kegiatanOpd) ? $kegiatanOpd->lokasi : '') }}" required>
+                        </div>
+                      </div>
+    
+                      <!-- Dokumentasi Kunjungan -->
+                      <div class="row mb-3">
+                        <label for="dokumentasi_kunjungan" class="col-sm-2 col-form-label">Dokumentasi Kunjungan</label>
+                        <div class="col-sm-10">
+                            @if(isset($kegiatanOpd) && $kegiatanOpd->dokumentasi_kunjungan)
+                                <!-- Jika sudah ada file, tampilkan nama file atau preview -->
+                                {{-- <a href="{{ asset('storage/' . $kegiatanOpd->dokumentasi_kunjungan) }}" target="_blank">Lihat File Sebelumnya</a> --}}
+                                <a href="{{ Storage::url($kegiatanOpd->dokumentasi_kunjungan) }}" target="_blank">Lihat File Sebelumnya</a>
+                                <br>
+                                <input type="file" class="form-control" id="dokumentasi_kunjungan" name="dokumentasi_kunjungan">
+                            @else
+                                <!-- Jika belum ada file, tampilkan input file kosong -->
+                                <input type="file" class="form-control" id="dokumentasi_kunjungan" name="dokumentasi_kunjungan" required>
+                            @endif
+                        </div>
+                      </div>
+    
+                      <!-- Button Submit -->
+                      <div class="row mb-3 mt-5">
+                          <div class="col-sm-12 text-end">
+                              <button type="submit" class="btn btn-primary">
+                                  {{ isset($kegiatanOpd) ? 'Update Kegiatan' : 'Tambahkan Kegiatan' }}
+                              </button>
+                          </div>
+                      </div>
+                  </form>
+              </div>
           </div>
-
-        {{-- </div> --}}
       </div>
-    </section>
+    </section>    
 
   </main><!-- End #main -->
 
@@ -707,6 +855,45 @@
 
   <!-- Template Main JS File -->
   <script src="{{asset('assets-backend/js/main.js')}}"></script>
+
+  {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> --}}
+  <script>
+    // Fungsi untuk memperbarui teks tombol dengan opsi yang dipilih
+    function updateButtonText() {
+        var selectedValues = [];
+        var checkboxes = document.querySelectorAll('.form-check-input:checked');
+        
+        checkboxes.forEach(function(checkbox) {
+            selectedValues.push(checkbox.nextElementSibling.innerText);
+        });
+
+        var button = document.getElementById('dropdownMenuButton');
+        
+        var maxDisplay = 3;  // Menentukan jumlah maksimal opsi yang ditampilkan
+        
+        if (selectedValues.length > 0) {
+            // Menampilkan hingga 3 opsi, sisanya ditambahkan "..."
+            button.innerText = selectedValues.slice(0, maxDisplay).join(', ') + (selectedValues.length > maxDisplay ? '...' : '');
+        } else {
+            button.innerText = 'Pilih Anggota Tim SMS'; // Teks default jika tidak ada yang dipilih
+        }
+    }
+
+    // Menambahkan event listener untuk setiap checkbox
+    document.querySelectorAll('.form-check-input').forEach(function(checkbox) {
+        checkbox.addEventListener('change', updateButtonText); // Perbarui teks tombol ketika checkbox berubah
+    });
+
+    // Prevent dropdown from closing when a checkbox is clicked
+    document.querySelector('.dropdown').addEventListener('click', function(event) {
+        event.stopPropagation(); // Mencegah dropdown menutup setelah checkbox diklik
+    });
+
+    // Menjalankan fungsi saat halaman dimuat (untuk edit)
+    document.addEventListener('DOMContentLoaded', function() {
+        updateButtonText(); // Memastikan teks tombol terisi dengan opsi yang sudah dipilih
+    });
+  </script>
 
 </body>
 

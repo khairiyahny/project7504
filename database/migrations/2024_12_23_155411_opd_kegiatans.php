@@ -13,23 +13,24 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tambahkegiatan', function (Blueprint $table) {
+        Schema::create('opd_kegiatans', function (Blueprint $table) {
             $table->id(); 
             $table->date('tanggal');
             $table->text('nama_anggota_tim_sms'); 
             $table->text('opd_lokus'); 
             $table->text('lokus_lainnya'); 
             $table->text('jenis_kegiatan');
-            $table->text('judul kegiatan'); 
+            $table->text('judul_kegiatan'); 
             $table->text('kunjungan'); 
             $table->text('nama_pegawai_opd'); 
             $table->text('jabatan_pegawai_opd'); 
             $table->text('topik_pendampingan');  
-            $table->text('skor_pemahaman_gsbpm'); 
-            $table->text('skor_pemahaman_rekomstat'); 
-            $table->text('skor_pemahaman_metadata'); 
+            $table->string('skor_pemahaman_gsbpm', 3);
+            $table->string('skor_pemahaman_rekomstat', 3);
+            $table->string('skor_pemahaman_metadata', 3);
             $table->text('resume'); 
-            $table->text('dokumentasi_kunjungan'); 
+            $table->text('lokasi');
+            $table->string('dokumentasi_kunjungan')->nullable();
             $table->timestamps(); 
         });
     }
@@ -41,6 +42,6 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('opd_kegiatans');
     }
 };
