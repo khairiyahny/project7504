@@ -245,9 +245,9 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="{{ url('backend/pages-faq')}}">
-                <i class="bi bi-question-circle"></i>
-                <span>Need Help?</span>
+              <a class="dropdown-item d-flex align-items-center" href="{{ route('password.change') }}">
+                <i class="bi bi-key"></i>
+                <span>Buat Password</span>
               </a>
             </li>
             <li>
@@ -255,10 +255,13 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
-              </a>
+              <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="dropdown-item d-flex align-items-center">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Sign Out</span>
+                </button>
+              </form>
             </li>
 
           </ul><!-- End Profile Dropdown Items -->

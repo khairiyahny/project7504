@@ -305,7 +305,7 @@
         <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-cast"></i><span>Master</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="statsek-nav" class="nav-content collapse" >
+        <ul id="master-nav" class="nav-content collapse" >
           <li>
             <a href="{{ url('backend')}}">
               <i class="bi bi-circle"></i><span>Master User</span>
