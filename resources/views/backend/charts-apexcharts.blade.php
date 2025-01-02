@@ -288,12 +288,12 @@
         </a>
         <ul id="statsek-nav" class="nav-content collapse" >
           <li>
-            <a href="{{ url('backend/tables-kegiatan')}}">
+            <a href="{{ route('backend.tables-kegiatan', ['segmen' => 'tpi_epss']) }}">
               <i class="bi bi-circle"></i><span>Pendampingan TPI EPSS</span>
             </a>
           </li>
           <li>
-            <a href="{{ url('backend/tables-kegiatan')}}">
+            <a href="{{ route('backend.tables-kegiatan', ['segmen' => 'opd']) }}">
               <i class="bi bi-circle"></i><span>Pendampingan OPD Statistik Sektoral</span>
             </a>
           </li>

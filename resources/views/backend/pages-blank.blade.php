@@ -245,9 +245,9 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="{{ url('backend/pages-faq')}}">
-                <i class="bi bi-question-circle"></i>
-                <span>Need Help?</span>
+              <a class="dropdown-item d-flex align-items-center" href="{{ route('password.change') }}">
+                <i class="bi bi-key"></i>
+                <span>Buat Password</span>
               </a>
             </li>
             <li>

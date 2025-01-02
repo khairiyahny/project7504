@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tpi_epss', function (Blueprint $table) {
-            $table->id(); 
-            $table->date('tanggal');
-            $table->text('nama_kegiatan');  
-            $table->timestamps(); 
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->timestamps();
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tpi_epss');
+        Schema::dropIfExists('users');
     }
 };

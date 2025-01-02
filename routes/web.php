@@ -3,7 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\KegiatanControllerOpd;
+use App\Http\Controllers\KegiatanControllerTpi;
+use App\Http\Controllers\SocialAuthController;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\LocationController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -129,24 +137,63 @@ Route::get('/backend/users-profile', function () {
     return view('backend.users-profile');
 });
 
-Route::get('/forms-layout', [FaqController::class, 'create'])->name('faq.create');
-Route::post('/forms-layout', [FaqController::class, 'submit'])->name('faq.submit');
-Route::get('/backend/tables-data', [FaqController::class, 'index'])->name('faq.index'); 
-Route::delete('/backend/tables-data/{id}', [FaqController::class, 'destroy'])->name('faq.destroy');
-Route::get('/backend/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
-Route::put('/backend/update/{id}', [FaqController::class, 'update'])->name('faq.update');
+// Route::get('/forms-layout', [FaqController::class, 'create'])->name('faq.create');
+// Route::post('/forms-layout', [FaqController::class, 'submit'])->name('faq.submit');
+// Route::get('/backend/tables-data', [FaqController::class, 'index'])->name('faq.index'); 
+// Route::delete('/backend/tables-data/{id}', [FaqController::class, 'destroy'])->name('faq.destroy');
+// Route::get('/backend/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
+// Route::put('/backend/update/{id}', [FaqController::class, 'update'])->name('faq.update');
 
-Route::get('/forms-layout', [FaqController::class, 'create'])->name('faq.create');
-Route::post('/forms-layout', [FaqController::class, 'submit'])->name('faq.submit');
-Route::get('/backend/tables-data', [FaqController::class, 'index'])->name('faq.index'); 
-Route::delete('/backend/tables-data/{id}', [FaqController::class, 'destroy'])->name('faq.destroy');
-Route::get('/backend/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
-Route::put('/backend/update/{id}', [FaqController::class, 'update'])->name('faq.update');
+Route::get('/backend/tables-kegiatan-opd', [KegiatanControllerOpd::class, 'index'])->name('backend.tables-kegiatan-opd');
+Route::get('/backend/forms-tambahkegiatan-opd', [KegiatanControllerOpd::class, 'create'])->name('backend.forms-tambahkegiatan-opd');
+Route::post('/backend/submit-opd', [KegiatanControllerOpd::class, 'submit'])->name('kegiatanopd.submit');
+Route::put('/backend/update-opd/{id}', [KegiatanControllerOpd::class, 'update'])->name('kegiatanopd.update');
+Route::get('/backend/edit-opd/{id}', [KegiatanControllerOpd::class, 'edit'])->name('kegiatanopd.edit');
+Route::delete('/backend/tables-kegiatan-opd/{id}', [KegiatanControllerOpd::class, 'destroy'])->name('kegiatanopd.destroy');
 
 Route::get('/backend/forms-tambahkegiatan', function () {
     return view('backend.forms-tambahkegiatan');
 });
 
+
+Route::get('/backend/tables-kegiatan-tpi', [KegiatanControllerTpi::class, 'index'])->name('backend.tables-kegiatan-tpi');
+Route::get('/backend/forms-tambahkegiatan-tpi', [KegiatanControllerTpi::class, 'create'])->name('backend.forms-tambahkegiatan-tpi');
+Route::post('/backend/submit-tpi', [KegiatanControllerTpi::class, 'submit'])->name('kegiatantpi.submit');
+Route::put('/backend/update-tpi/{id}', [KegiatanControllerTpi::class, 'update'])->name('kegiatantpi.update');
+Route::get('/backend/edit-tpi/{id}', [KegiatanControllerTpi::class, 'edit'])->name('kegiatantpi.edit');
+Route::delete('/backend/tables-kegiatan-tpi/{id}', [KegiatanControllerTpi::class, 'destroy'])->name('kegiatantpi.destroy');
+
+// Route::get('/backend/login', function () {
+//     return view('backend.pages-login-oauth');
+// });
+// Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.login');
+// Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
+// Route::post('/backend/login', [SocialAuthController::class, 'login'])->name('login');
+
+// Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.form');
+// Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
+// Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/change-password', [PasswordController::class, 'showPasswordForm'])->name('password.change');
+Route::post('/change-password', [PasswordController::class, 'updatePassword']);
+
+// Diharuskan login dulu sebelum bisa akses backend
+// Route::middleware(['auth'])->get('/backend', function () {
+//     return view('backend.index-backend');
+// });
+Route::middleware(['auth'])->group(function () {
+    Route::get('/change-password', [PasswordController::class, 'showPasswordForm'])->name('password.change');
+    Route::post('/change-password', [PasswordController::class, 'updatePassword']);
+});
+Route::middleware(['auth', 'role:admin'])->get('/backend', function () {
+    return view('backend.index-backend');
+});
+Route::middleware(['auth', 'role:user'])->get('/backend/pages-blank', function () {
+    return view('backend.pages-blank');
+});
+
 Route::get('/get-location', [LocationController::class, 'getLocation'])->name('get.location');
 
 
+Auth::routes();
