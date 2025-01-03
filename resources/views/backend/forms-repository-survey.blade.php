@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Tables / Data - NiceAdmin Bootstrap Template</title>
+  <title>Forms / Elements - NiceAdmin Bootstrap Template</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -28,6 +28,8 @@
 
   <!-- Template Main CSS File -->
   <link href="{{asset('assets-backend/css/style.css')}}" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: NiceAdmin
@@ -310,26 +312,10 @@
 
       <!-- Master Dropdown -->
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-cast"></i><span>Master</span><i class="bi bi-chevron-down ms-auto"></i>
+        <a class="nav-link " href="{{ url('backend')}}">
+          <i class="bi bi-cast"></i>
+          <span>Master</span>
         </a>
-        <ul id="master-nav" class="nav-content collapse" >
-          <li>
-            <a href="{{ url('backend')}}">
-              <i class="bi bi-circle"></i><span>Master User</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ url('backend')}}">
-              <i class="bi bi-circle"></i><span>Master Pegawai</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ url('backend')}}">
-              <i class="bi bi-circle"></i><span>Master OPD</span>
-            </a>
-          </li>
-        </ul>
       </li>
       
       <!-- Templates Droppdown -->
@@ -570,56 +556,240 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Daftar Kegiatan</h1>
+      <h1>Menambahkan Survey</h1>
     </div><!-- End Page Title -->
 
     <section class="section">
       <div class="row">
-        <div class="col-lg-12">
-
           <div class="card">
-            <div class="card-body">
-              {{-- <h5 class="card-title">Datatables</h5> --}}
-              <div class="d-flex justify-content-between mb-3 mt-3">
-                <a href="{{ route('backend.forms-tambahkegiatan-tpi') }}" class="btn btn-primary ms-auto">Tambah Kegiatan</a>
+              <div class="card-body">
+                  <h5 class="card-title">Form Repository Survey</h5>
+    
+                  <!-- Notifikasi success -->
+                  @if (session('success'))
+                      <div class="alert alert-success">
+                          {{ session('success') }}
+                      </div>
+                  @endif
+    
+                  <!-- Cek error -->
+                  @if ($errors->any())
+                  <div class="alert alert-danger">
+                      <ul>
+                          @foreach ($errors->all() as $error)
+                              <li>{{ $error }}</li>
+                          @endforeach
+                      </ul>
+                  </div>
+                  @endif
+    
+                  <!-- Form Tambah/Edit Kegiatan -->
+                  <form method="POST" action="{{ isset($repoSurvey) ? route('reposurvey.update', $repoSurvey->id) : route('reposurvey.submit') }}" enctype="multipart/form-data">
+                      @csrf
+                      @isset($repoSurvey)
+                          @method('PUT')
+                      @endisset
+    
+                      <input type="hidden" name="id" value="{{ old('id', $repoSurvey->id ?? '') }}">
+
+                      <!-- Nama Survei -->
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Nama Survei</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="namaSurvey" name="nama_survey" value="{{ old('nama_survey', $repoSurvey->nama_survey ?? '') }}" required>
+                        </div>
+                      </div>
+    
+                      <!-- Sifat -->
+                      <div class="row mb-3">
+                        <label for="sifatSurvey" class="col-sm-2 col-form-label">Sifat</label>
+                        <div class="col-sm-10">
+                            <select class="form-select" id="sifatSurvey" name="sifat" required>
+                                <option value="" disabled selected></option>
+                                @foreach($sifatSurvey as $sifat)
+                                    <option value="{{ $sifat }}" {{ (isset($repoSurvey) && $repoSurvey->sifat == $sifat) ? 'selected' : '' }}>
+                                        {{ $sifat }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                      </div>
+                      
+                      <!-- Unit Sampling/Observasi -->
+                      <div class="row mb-3">
+                        <label for="unitSampling" class="col-sm-2 col-form-label">Unit Sampling/Observasi</label>
+                        <div class="col-sm-10">
+                            <select class="form-select" id="unitSampling" name="unit_sampling_observasi" required>
+                                <option value="" disabled selected></option>
+                                @foreach($unitSampling as $unit_sampling_observasi)
+                                    <option value="{{ $unit_sampling_observasi }}" {{ (isset($repoSurvey) && $repoSurvey->unit_sampling_observasi == $unit_sampling_observasi) ? 'selected' : '' }}>
+                                        {{ $unit_sampling_observasi }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                      </div>
+
+                      <!-- Fungsi/Tim -->
+                      <div class="row mb-3">
+                        <label for="tim" class="col-sm-2 col-form-label">Fungsi/Tim</label>
+                        <div class="col-sm-10">
+                            <select class="form-select" id="tim" name="tim" required>
+                                <option value="" disabled selected></option>
+                                @foreach($tim as $tim)
+                                    <option value="{{ $tim }}" {{ (isset($repoSurvey) && $repoSurvey->tim == $tim) ? 'selected' : '' }}>
+                                        {{ $tim }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                      </div>
+
+                      <!-- Kegiatan -->
+                      <div class="row mb-3">
+                        <label for="kegiatan" class="col-sm-2 col-form-label">Hasil Pengecekan di POK-0 2025</label>
+                        <div class="col-sm-10">
+                            <select class="form-select" id="kegiatan" name="kegiatan" required>
+                                <option value="" disabled selected></option>
+                                @foreach($kegiatan as $kegiatan)
+                                    <option value="{{ $kegiatan }}" {{ (isset($repoSurvey) && $repoSurvey->kegiatan == $kegiatan) ? 'selected' : '' }}>
+                                        {{ $kegiatan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                      </div>
+
+                      <!-- Tingkat Kesulitan -->
+                      <div class="row mb-3">
+                        <label for="tingkatSulit" class="col-sm-2 col-form-label">
+                            Tingkat Kesulitan Kegiatan dibandingkan Kegiatan Lain di Fungsi yang Sama
+                        </label>
+                        <div class="col-sm-10">
+                            <select class="form-select" id="tingkatSulit" name="tingkat_kesulitan" required>
+                                <option value="" disabled selected>Pilih Tingkat Kesulitan</option>
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <option value="{{ $i }}" {{ (isset($repoSurvey) && $repoSurvey->tingkat_kesulitan == $i) ? 'selected' : '' }}>
+                                        {{ $i }}
+                                    </option>
+                                @endfor
+                            </select>
+                            <small class="form-text text-muted mt-2">
+                                1 sd 5, 1 sangat mudah dan 5 sangat sulit
+                            </small>
+                        </div>
+                      </div>
+                      
+                      <!-- Hasil Pengecekan di POK-0 2025 -->
+                      <div class="row mb-3">
+                        <label for="hasilCek" class="col-sm-2 col-form-label">Hasil Pengecekan di POK-0 2025</label>
+                        <div class="col-sm-10">
+                            <select class="form-select" id="hasilCek" name="hasil_pengecekan" required>
+                                <option value="" disabled selected></option>
+                                @foreach($cekPok as $pok)
+                                    <option value="{{ $pok }}" {{ (isset($repoSurvey) && $repoSurvey->hasil_pengecekan == $pok) ? 'selected' : '' }}>
+                                        {{ $pok }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                      </div>
+
+                      <!--PJ -->
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Penanggung Jawab</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="pj" name="pj" value="{{ old('pj', $repoSurvey->pj ?? '') }}" required>
+                        </div>
+                      </div>
+
+                      <!-- Jumlah Sampel -->
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Jumlah Sampel</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="jumlahSampel" name="jumlah_sampel" value="{{ old('jumlah_sampel', $repoSurvey->jumlah_sampel ?? '') }}" required>
+                        </div>
+                      </div>
+
+                      <!-- Tahun -->
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Tahun</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="tahun" name="tahun" value="{{ old('tahun', $repoSurvey->tahun ?? '') }}" required>
+                        </div>
+                      </div>
+
+                      <!-- Upload Kuesioner -->
+                      <div class="row mb-3">
+                        <label for="kuesioner" class="col-sm-2 col-form-label">Dokumen PDF Kuesioner</label>
+                        <div class="col-sm-10">
+                            @if(isset($repoSurvey) && $repoSurvey->kuesioner)
+                                <a href="{{ Storage::url($repoSurvey->kuesioner) }}" target="_blank">Lihat File Sebelumnya</a>
+                                <br>
+                                <input type="file" class="form-control" id="kuesioner" name="kuesioner">
+                            @else
+                                <input type="file" class="form-control" id="kuesioner" name="kuesioner" required>
+                            @endif
+                        </div>
+                      </div>
+
+                      <!-- RAW Data -->
+                      <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">RAW Data</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="rawData" name="raw_data" value="{{ old('raw_data', $repoSurvey->raw_data ?? '') }}" required>
+                        </div>
+                      </div>
+
+                      <!-- Ada Pengolahan -->
+                      <div class="row mb-3">
+                        <label for="pengolahanKab" class="col-sm-2 col-form-label">Pengolahan di BPS Kabupaten</label>
+                        <div class="col-sm-10">
+                          <select class="form-select" id="pengolahanKab" name="pengolahan_kab" required onchange="togglePlatformPengolahan()">
+                            <option value="" disabled selected>Pilih Ya/Tidak</option>
+                            <option value="1" {{ (isset($repoSurvey) && $repoSurvey->pengolahan_kab == 1) ? 'selected' : '' }}>Ya</option>
+                            <option value="0" {{ (isset($repoSurvey) && $repoSurvey->pengolahan_kab === 0) ? 'selected' : '' }}>Tidak</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <!-- Platform Pengolahan -->
+                      <div class="row mb-3" id="platformPengolahanSection" style="display:none;">
+                        <label for="platform" class="col-sm-2 col-form-label">Platform Pengolahan</label>
+                        <div class="col-sm-10">
+                          <select class="form-select" id="platform" name="platform_pengolahan" required onchange="toggleLinkInput()">
+                            <option value="" disabled selected>Pilih Platform</option>
+                            <option value="1" {{ (isset($repoSurvey) && $repoSurvey->platform_pengolahan == 1) ? 'selected' : '' }}>Dekstop</option>
+                            <option value="0" {{ (isset($repoSurvey) && $repoSurvey->platform_pengolahan === 0) ? 'selected' : '' }}>Online</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <!-- Dekstop (Link Monitoring) -->
+                      <div id="linkMonitoringDiv" style="display: none;">
+                        <label for="linkMonitoring">Link Monitoring</label>
+                        <input type="url" id="linkMonitoring" name="link_monitoring" class="form-control" value="{{ old('link_monitoring', $repoSurvey->link_monitoring ?? '') }}">
+                      </div>
+
+                      <!-- Online (Link Webentry) -->
+                      <div id="linkWebentryDiv" style="display: none;">
+                        <label for="linkWebentry">Link Webentry</label>
+                        <input type="url" id="linkWebentry" name="link_webentry" class="form-control" value="{{ old('link_webentry', $repoSurvey->link_webentry ?? '') }}">
+                      </div>
+    
+                      <!-- Button Submit -->
+                      <div class="row mb-3 mt-5">
+                          <div class="col-sm-12 text-end">
+                              <button type="submit" class="btn btn-primary">
+                                  {{ isset($repoSurvey) ? 'Update Survey' : 'Tambahkan Survey' }}
+                              </button>
+                          </div>
+                      </div>
+                  </form>
               </div>
-
-              <!-- Table with stripped rows -->
-              <table class="table datatable">
-                <thead>
-                  <tr>
-                    <th class="text-center">
-                      <b>OPD EPSS</b>
-                    </th>
-                    <th class="text-center" data-type="date" data-format="YYYY/DD/MM">Tanggal</th>
-                    <th class="text-center">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach($kegiatanTpi as $kegiatanTpi)
-                  <tr>
-                      <td>{{ $kegiatanTpi->opd_epss }}</td>
-                      <td class="text-center">{{ $kegiatanTpi->tanggal }}</td>
-                      <td class="text-center">
-                        <a href="{{ route('kegiatantpi.edit', $kegiatanTpi->id) }}" class="btn btn-warning d-inline-block mr-2">Edit</a>
-                        <form action="{{ route('kegiatantpi.destroy', $kegiatanTpi->id) }}" method="POST" class="d-inline-block">
-                            @csrf
-                            @method('DELETE') 
-                            <button type="submit" class="btn btn-danger">Hapus</button>
-                        </form>
-                      </td>
-                  </tr>
-                  @endforeach
-                </tbody>
-              </table>
-              <!-- End Table with stripped rows -->
-
-            </div>
           </div>
-
-        </div>
       </div>
-    </section>
+    </section>    
 
   </main><!-- End #main -->
 
@@ -651,6 +821,41 @@
 
   <!-- Template Main JS File -->
   <script src="{{asset('assets-backend/js/main.js')}}"></script>
+
+  {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> --}}
+
+  <script>
+    // Fungsi untuk menangani tampilan section platform pengolahan berdasarkan pengolahan_kab
+    function togglePlatformPengolahan() {
+      var pengolahanKab = document.getElementById('pengolahanKab').value;
+      
+      if (pengolahanKab == '1') {
+        document.getElementById('platformPengolahanSection').style.display = 'block';
+      } else {
+        document.getElementById('platformPengolahanSection').style.display = 'none';
+        document.getElementById('linkMonitoringDiv').style.display = 'none';
+        document.getElementById('linkWebentryDiv').style.display = 'none';
+      }
+    }
+
+    // Fungsi untuk menampilkan input link berdasarkan platform
+    function toggleLinkInput() {
+      var platform = document.getElementById('platform').value;
+      
+      if (platform == '1') {  // Dekstop
+        document.getElementById('linkMonitoringDiv').style.display = 'block';
+        document.getElementById('linkWebentryDiv').style.display = 'none';
+      } else if (platform == '0') {  // Online
+        document.getElementById('linkWebentryDiv').style.display = 'block';
+        document.getElementById('linkMonitoringDiv').style.display = 'none';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      togglePlatformPengolahan();  
+      toggleLinkInput();  
+    });
+  </script>
 
 </body>
 
