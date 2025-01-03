@@ -10,8 +10,6 @@ use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PasswordController;
-use App\Http\Controllers\LocationController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -151,11 +149,6 @@ Route::put('/backend/update-opd/{id}', [KegiatanControllerOpd::class, 'update'])
 Route::get('/backend/edit-opd/{id}', [KegiatanControllerOpd::class, 'edit'])->name('kegiatanopd.edit');
 Route::delete('/backend/tables-kegiatan-opd/{id}', [KegiatanControllerOpd::class, 'destroy'])->name('kegiatanopd.destroy');
 
-Route::get('/backend/forms-tambahkegiatan', function () {
-    return view('backend.forms-tambahkegiatan');
-});
-
-
 Route::get('/backend/tables-kegiatan-tpi', [KegiatanControllerTpi::class, 'index'])->name('backend.tables-kegiatan-tpi');
 Route::get('/backend/forms-tambahkegiatan-tpi', [KegiatanControllerTpi::class, 'create'])->name('backend.forms-tambahkegiatan-tpi');
 Route::post('/backend/submit-tpi', [KegiatanControllerTpi::class, 'submit'])->name('kegiatantpi.submit');
@@ -183,7 +176,6 @@ Route::post('/change-password', [PasswordController::class, 'updatePassword']);
 //     return view('backend.index-backend');
 // });
 Route::middleware(['auth'])->group(function () {
-    Route::get('/change-password', [PasswordController::class, 'showPasswordForm'])->name('password.change');
     Route::post('/change-password', [PasswordController::class, 'updatePassword']);
 });
 Route::middleware(['auth', 'role:admin'])->get('/backend', function () {
@@ -192,8 +184,5 @@ Route::middleware(['auth', 'role:admin'])->get('/backend', function () {
 Route::middleware(['auth', 'role:user'])->get('/backend/pages-blank', function () {
     return view('backend.pages-blank');
 });
-
-Route::get('/get-location', [LocationController::class, 'getLocation'])->name('get.location');
-
 
 Auth::routes();
