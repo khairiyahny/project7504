@@ -570,7 +570,7 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Daftar Kegiatan</h1>
+      <h1>Daftar Survei</h1>
     </div><!-- End Page Title -->
 
     <section class="section">
@@ -581,7 +581,7 @@
             <div class="card-body">
               {{-- <h5 class="card-title">Datatables</h5> --}}
               <div class="d-flex justify-content-between mb-3 mt-3">
-                <a href="{{ route('backend.forms-tambahkegiatan-tpi') }}" class="btn btn-primary ms-auto">Tambah Kegiatan</a>
+                <a href="{{ route('backend.forms-repository-survey') }}" class="btn btn-primary ms-auto">Tambah Survey</a>
               </div>
 
               <!-- Table with stripped rows -->
@@ -589,20 +589,22 @@
                 <thead>
                   <tr>
                     <th class="text-center">
-                      <b>OPD EPSS</b>
+                      <b>Nama Survei</b>
                     </th>
-                    <th class="text-center" data-type="date" data-format="YYYY/DD/MM">Tanggal</th>
+                    <th class="text-center" data-type="date" data-format="YYYY/DD/MM">Fungsi/Tim</th>
+                    <th class="text-center">Tahun</th>
                     <th class="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach($kegiatanTpi as $kegiatanTpi)
+                  @foreach($repoSurveys as $repoSurvey)
                   <tr>
-                      <td>{{ $kegiatanTpi->opd_epss }}</td>
-                      <td class="text-center">{{ $kegiatanTpi->tanggal }}</td>
+                      <td>{{ $repoSurvey->nama_survey }}</td>
+                      <td class="text-center">{{ $repoSurvey->tim }}</td>
+                      <td class="text-center">{{ $repoSurvey->tahun }}</td>
                       <td class="text-center">
-                        <a href="{{ route('kegiatantpi.edit', $kegiatanTpi->id) }}" class="btn btn-warning d-inline-block mr-2">Edit</a>
-                        <form action="{{ route('kegiatantpi.destroy', $kegiatanTpi->id) }}" method="POST" class="d-inline-block">
+                        <a href="{{ route('reposurvey.edit', $repoSurvey->id) }}" class="btn btn-warning d-inline-block mr-2">Edit</a>
+                        <form action="{{ route('reposurvey.destroy', $repoSurvey->id) }}" method="POST" class="d-inline-block">
                             @csrf
                             @method('DELETE') 
                             <button type="submit" class="btn btn-danger">Hapus</button>

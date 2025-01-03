@@ -10,6 +10,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\RepoSurveyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -186,3 +187,14 @@ Route::middleware(['auth', 'role:user'])->get('/backend/pages-blank', function (
 });
 
 Auth::routes();
+
+Route::get('/backend/tables-repository-survey', [RepoSurveyController::class, 'index'])->name('backend.tables-repository-survey');
+Route::get('/backend/forms-repository-survey', [RepoSurveyController::class, 'create'])->name('backend.forms-repository-survey');
+Route::post('/backend/submit-repository-survey', [RepoSurveyController::class, 'submit'])->name('reposurvey.submit');
+Route::put('/backend/update-repository-survey/{id}', [RepoSurveyController::class, 'update'])->name('reposurvey.update');
+Route::get('/backend/edit-repository-survey/{id}', [RepoSurveyController::class, 'edit'])->name('reposurvey.edit');
+Route::delete('/backend/tables-repository-survey/{id}', [RepoSurveyController::class, 'destroy'])->name('reposurvey.destroy');
+
+// Route::get('/backend/forms-repository-survey', function () {
+//     return view('backend.forms-repository-survey');
+// });

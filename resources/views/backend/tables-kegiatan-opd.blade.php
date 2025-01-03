@@ -300,6 +300,14 @@
         </ul>
       </li>
 
+      <!-- Repository Survey -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('backend.tables-repository-survey')}}">
+          <i class="bi bi-ui-checks"></i>
+          <span>Repository Survey</span>
+        </a>
+      </li>
+
       <!-- Master Dropdown -->
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">

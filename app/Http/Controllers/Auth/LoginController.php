@@ -65,9 +65,9 @@ class LoginController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             // beda role
             if (Auth::user()->role == 'admin') {
-                return redirect('/backend'); // Arahkan admin ke backend
+                return redirect('/backend'); 
             } else {
-                return redirect('/backend/pages-blank'); // Arahkan user ke halaman blank
+                return redirect('/backend/pages-error-404'); 
             }
         }
 
